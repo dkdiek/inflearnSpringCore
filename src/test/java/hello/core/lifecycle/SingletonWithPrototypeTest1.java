@@ -2,8 +2,9 @@ package hello.core.lifecycle;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import lombok.RequiredArgsConstructor;
+import jakarta.inject.Provider;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
 
@@ -35,11 +36,13 @@ public class SingletonWithPrototypeTest1 {
   }
   
   @Scope("singleton")
-  @RequiredArgsConstructor
   static class ClientBean {
-    private final PrototypeBean prototypeBean; //생성시점에 주입 후 계속 갖고 있음
+    
+    @Autowired
+    private Provider<PrototypeBean> prototypeBeanProvider;
     
     public int logic() {
+      PrototypeBean prototypeBean = prototypeBeanProvider.get();
       prototypeBean.addCount();
       int count = prototypeBean.getCount();
       return count;
